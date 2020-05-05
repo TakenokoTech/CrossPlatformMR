@@ -75,3 +75,6 @@ Assets/Plugins/Editor/JetBrains*
 
 # Visual Studio Code
 .vscode/
+
+# Application
+App/
