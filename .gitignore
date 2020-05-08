@@ -77,4 +77,6 @@ Assets/Plugins/Editor/JetBrains*
 .vscode/
 
 # Application
-App/
+App/Android/
+App/UWP/
+App/PackageCertificate.pfx
