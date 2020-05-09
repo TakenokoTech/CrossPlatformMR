@@ -40,7 +40,7 @@ namespace Project.Scripts.Runtime.camera
             GameObject.CreatePrimitive(PrimitiveType.Quad).Apply(quad =>
             {
                 quad.transform.parent = transform;
-                quad.transform.localPosition = new Vector3(0.0f, 0.0f, 3.0f);
+                quad.transform.localPosition = new Vector3(0.0f, 0.0f, 1.0f);
                 quad.transform.localScale = new Vector3(
                     (float) photoCaptureModel.resolution.width / photoCaptureModel.resolution.height, 1, 1);
                 quad.GetComponent<Renderer>().Apply(render =>

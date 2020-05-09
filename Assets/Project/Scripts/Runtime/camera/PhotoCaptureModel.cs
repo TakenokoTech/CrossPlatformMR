@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Project.Scripts.Runtime.utils;
 using UnityEngine;
@@ -13,7 +12,9 @@ namespace Project.Scripts.Runtime.camera
 
         internal readonly Texture2D texture;
         internal readonly Resolution resolution;
+        
         private PhotoCapture photoCaptureObject;
+        private const int MaxSize = 1920 * 1080; // or 1280 * 720
 
         /**
          * After calling Start().
@@ -23,14 +24,14 @@ namespace Project.Scripts.Runtime.camera
             resolution = PhotoCapture
                 .SupportedResolutions
                 .OrderByDescending(res => res.width * res.height)
-                .First(res => res.width * res.height <= 1280 * 720);
+                .First(res => res.width * res.height <= MaxSize);
             texture = new Texture2D(resolution.width, resolution.height);
         }
 
         internal async Task<PhotoCapture.PhotoCaptureResult> PhotoCaptureCreate()
         {
             var completed = new TaskCompletionSource<PhotoCapture.PhotoCaptureResult>();
-            Log.D(Tag, $"Create a PhotoCapture object. {resolution.ToString()}");
+            Log.D(Tag, $"Create a PhotoCapture object. {resolution}");
             PhotoCapture.CreateAsync(captureObject =>
             {
                 photoCaptureObject = captureObject;

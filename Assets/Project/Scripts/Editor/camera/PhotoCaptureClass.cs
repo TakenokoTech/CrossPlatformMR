@@ -12,9 +12,9 @@ namespace Project.Scripts.Editor.camera
         public static void CheckSupportedResolutions()
         {
             Log.D(Tag, "Check PhotoCapture.SupportedResolutions");
-            foreach (var a in PhotoCapture.SupportedResolutions)
+            foreach (var resolution in PhotoCapture.SupportedResolutions)
             {
-                Log.D(Tag, a.ToString());
+                Log.D(Tag, $"{resolution}");
             }
         }
     }
