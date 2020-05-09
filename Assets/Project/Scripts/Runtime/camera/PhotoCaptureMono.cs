@@ -1,72 +1,54 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Project.Scripts.Runtime.utils;
 using UnityEngine;
-// using UnityEngine.XR.WSA.WebCam;
-/*
+using UnityEngine.Windows.WebCam;
+
 namespace Project.Scripts.Runtime.camera
 {
     public class PhotoCaptureMono : MonoBehaviour
     {
-        private UnityEngine.Windows.WebCam.PhotoCapture _photoCaptureObject;
-        private Texture2D _targetTexture;
+        private const string Tag = "PhotoCaptureMono";
+
+        private PhotoCaptureModel photoCaptureModel;
         private static readonly int MainTex = Shader.PropertyToID("_MainTex");
 
-        // Use this for initialization
-        void Start()
+        async void Start()
         {
-            var cameraResolution = UnityEngine.Windows.WebCam.PhotoCapture.SupportedResolutions
-                .OrderByDescending((res) => res.width * res.height).First();
-            _targetTexture = new Texture2D(cameraResolution.width, cameraResolution.height);
+            Log.D(Tag, "Start");
 
-            // Create a PhotoCapture object
-            UnityEngine.Windows.WebCam.PhotoCapture.CreateAsync(false,
-                delegate(UnityEngine.Windows.WebCam.PhotoCapture captureObject)
+            photoCaptureModel = new PhotoCaptureModel();
+            var result = await photoCaptureModel.PhotoCaptureCreate();
+            if (!result.success) return;
+            
+            CreateQuad();
+
+            await photoCaptureModel.TakePhoto();
+            await photoCaptureModel.StopPhoto();
+        }
+
+        private void OnDestroy()
+        {
+            Log.D(Tag, "OnDestroy");
+            photoCaptureModel.Cancel();
+        }
+
+        private void CreateQuad()
+        {
+            Log.D(Tag, "CreateQuad");
+            GameObject.CreatePrimitive(PrimitiveType.Quad).Apply(quad =>
+            {
+                quad.transform.parent = transform;
+                quad.transform.localPosition = new Vector3(0.0f, 0.0f, 3.0f);
+                quad.transform.localScale = new Vector3(
+                    (float) photoCaptureModel.resolution.width / photoCaptureModel.resolution.height, 1, 1);
+                quad.GetComponent<Renderer>().Apply(render =>
                 {
-                    _photoCaptureObject = captureObject;
-                    var cameraParameters =
-                        new UnityEngine.Windows.WebCam.CameraParameters
-                        {
-                            hologramOpacity = 0.0f,
-                            cameraResolutionWidth = cameraResolution.width,
-                            cameraResolutionHeight = cameraResolution.height,
-                            pixelFormat = UnityEngine.Windows.WebCam.CapturePixelFormat.BGRA32
-                        };
-
-                    // Activate the camera
-                    _photoCaptureObject.StartPhotoModeAsync(cameraParameters,
-                        delegate
-                        {
-                            // Take a picture
-                            _photoCaptureObject.TakePhotoAsync(OnCapturedPhotoToMemory);
-                        });
+                    render.material = new Material(Shader.Find("Unlit/Texture"));
+                    render.material.SetTexture(MainTex, photoCaptureModel.texture);
                 });
-        }
-
-        void OnCapturedPhotoToMemory(UnityEngine.Windows.WebCam.PhotoCapture.PhotoCaptureResult result,
-            UnityEngine.Windows.WebCam.PhotoCaptureFrame photoCaptureFrame)
-        {
-            // Copy the raw image data into our target texture
-            photoCaptureFrame.UploadImageDataToTexture(_targetTexture);
-
-            // Create a game object that we can apply our texture to
-            var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            var quadRenderer = quad.GetComponent<Renderer>();
-            quadRenderer.material = new Material(Shader.Find("Unlit/Texture"));
-
-            quad.transform.parent = this.transform;
-            quad.transform.localPosition = new Vector3(0.0f, 0.0f, 3.0f);
-
-            quadRenderer.material.SetTexture(MainTex, _targetTexture);
-
-            // Deactivate our camera
-            _photoCaptureObject.StopPhotoModeAsync(OnStoppedPhotoMode);
-        }
-
-        void OnStoppedPhotoMode(UnityEngine.Windows.WebCam.PhotoCapture.PhotoCaptureResult result)
-        {
-            // Shutdown our photo capture resource
-            _photoCaptureObject.Dispose();
-            _photoCaptureObject = null;
+            });
         }
     }
 }
-*/
