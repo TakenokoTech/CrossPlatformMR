@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Project.Scripts.Runtime.utils;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Windows.WebCam;
 
@@ -11,7 +13,10 @@ namespace Project.Scripts.Runtime.camera
     {
         private const string Tag = "PhotoCaptureMono";
 
-        private PhotoCaptureModel photoCaptureModel;
+        [Space(16)]
+        [SerializeField] private Material material;
+
+        internal PhotoCaptureModel photoCaptureModel;
         private static readonly int MainTex = Shader.PropertyToID("_MainTex");
 
         async void Start()
@@ -22,16 +27,16 @@ namespace Project.Scripts.Runtime.camera
             var result = await photoCaptureModel.PhotoCaptureCreate();
             if (!result.success) return;
             
-            CreateQuad();
+            // CreateQuad();
+            material.SetTexture(MainTex, photoCaptureModel.texture);
 
             await photoCaptureModel.TakePhoto();
-            await photoCaptureModel.StopPhoto();
         }
 
-        private void OnDestroy()
+        private async void OnDestroy()
         {
             Log.D(Tag, "OnDestroy");
-            photoCaptureModel.Cancel();
+            await photoCaptureModel.StopPhoto();
         }
 
         private void CreateQuad()
@@ -51,4 +56,16 @@ namespace Project.Scripts.Runtime.camera
             });
         }
     }
+
+    [CustomEditor(typeof(PhotoCaptureMono))]
+    [SuppressMessage("ReSharper", "Unity.NoNullPropagation")]
+    public class ExampleScriptEditor : Editor {
+        public override void OnInspectorGUI(){
+            base.OnInspectorGUI ();
+            var photoCaptureMono = target as PhotoCaptureMono;
+            if (GUILayout.Button("Take Photo")){
+                photoCaptureMono?.photoCaptureModel?.TakePhoto();
+            }  
+        }
+    } 
 }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Project.Scripts.Runtime.utils;
 using UnityEngine;
@@ -63,25 +64,28 @@ namespace Project.Scripts.Runtime.camera
             return await completed.Task;
         }
 
+        // ReSharper disable once AccessToDisposedClosure
         internal async Task<PhotoCapture.PhotoCaptureResult> StopPhoto()
         {
             Log.D(Tag, $"StopPhoto");
             var completed = new TaskCompletionSource<PhotoCapture.PhotoCaptureResult>();
-            photoCaptureObject.StopPhotoModeAsync(result =>
+            try
             {
-                Log.D(Tag, $"OnPhotoModeStoppedCallback. success={result.success}");
+                photoCaptureObject.StopPhotoModeAsync(result =>
+                {
+                    Log.D(Tag, $"OnPhotoModeStoppedCallback. success={result.success}");
+                    photoCaptureObject?.Dispose();
+                    photoCaptureObject = null;
+                    completed.SetResult(result);
+                });
+            }
+            catch (Exception e)
+            {
+                Log.D(Tag, e.ToString());
                 photoCaptureObject?.Dispose();
                 photoCaptureObject = null;
-                completed.SetResult(result);
-            });
+            }
             return await completed.Task;
-        }
-
-        internal void Cancel()
-        {
-            Log.D(Tag, "Cancel");
-            photoCaptureObject?.Dispose();
-            photoCaptureObject = null;
         }
     }
 }
