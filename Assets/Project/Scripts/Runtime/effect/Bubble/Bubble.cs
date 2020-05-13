@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
-namespace Project.Scripts.Runtime.effect
+namespace Project.Scripts.Runtime.effect.Bubble
 {
-    public class BubbleMove : MonoBehaviour
+    public class Bubble : MonoBehaviour
     {
-        [SerializeField] private bool emit = false;
+        [SerializeField] internal bool emit = false;
         [SerializeField] private GameObject particle;
         
         private MeshRenderer mesh = null;
