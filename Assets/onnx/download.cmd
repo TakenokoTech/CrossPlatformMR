@@ -1,0 +1,2 @@
+bitsadmin /TRANSFER "onnx1" https://github.com/onnx/models/raw/master/vision/object_detection_segmentation/yolov3/model/yolov3-10.onnx %CD%/yolov3-10.onnx
+bitsadmin /TRANSFER "onnx2" https://github.com/onnx/models/raw/master/vision/classification/vgg/model/vgg19-7.onnx %CD%/vgg19-7.onnx
