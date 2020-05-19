@@ -31,9 +31,12 @@ namespace Project.Scripts.Runtime.chat
         {
             Log.D(Tag, "OnJoinedRoom");
             var position = new Vector3(0,0, 5);
-            var monster = PhotonNetwork.Instantiate("SyncObject", position, Quaternion.identity, 0);
-            var monsterScript = monster.GetComponent<SyncObjectScript>();
-            monsterScript.enabled = true;
+            var syncObject = PhotonNetwork.Instantiate("SyncObject", position, Quaternion.identity, 0);
+            var syncObjectScript = syncObject.GetComponent<SyncObjectScript>();
+            syncObjectScript.enabled = true;
+            
+            // voice
+            var syncVoice = PhotonNetwork.Instantiate("SyncVoice", position, Quaternion.identity, 0);
         }
     }
 }
