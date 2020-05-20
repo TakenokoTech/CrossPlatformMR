@@ -33,6 +33,7 @@ namespace Project.Scripts.Runtime.transition
         }
     }
     
+#if UNITY_EDITOR
     [CustomEditor(typeof(SceneManagerMono))]
     [SuppressMessage("ReSharper", "Unity.NoNullPropagation")]
     public class SceneManagerMonoEditor : Editor {
@@ -48,5 +49,7 @@ namespace Project.Scripts.Runtime.transition
             } 
         }
     } 
+#endif
+
 }
 #endif

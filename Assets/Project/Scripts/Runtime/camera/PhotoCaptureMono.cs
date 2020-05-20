@@ -10,8 +10,7 @@ namespace Project.Scripts.Runtime.camera
     {
         private const string Tag = "PhotoCaptureMono";
 
-        [Space(16)]
-        [SerializeField] private Material material;
+        [Space(16)] [SerializeField] private Material material;
 
         internal PhotoCaptureModel photoCaptureModel;
         private static readonly int MainTex = Shader.PropertyToID("_MainTex");
@@ -23,7 +22,7 @@ namespace Project.Scripts.Runtime.camera
             photoCaptureModel = new PhotoCaptureModel();
             var result = await photoCaptureModel.PhotoCaptureCreate();
             if (!result.success) return;
-            
+
             // CreateQuad();
             material.SetTexture(MainTex, photoCaptureModel.texture);
 
@@ -54,6 +53,7 @@ namespace Project.Scripts.Runtime.camera
         }
     }
 
+#if UNITY_EDITOR
     [CustomEditor(typeof(PhotoCaptureMono))]
     [SuppressMessage("ReSharper", "Unity.NoNullPropagation")]
     public class ExampleScriptEditor : Editor {
@@ -65,5 +65,7 @@ namespace Project.Scripts.Runtime.camera
             }  
         }
     } 
+#endif
+    
 }
 #endif
