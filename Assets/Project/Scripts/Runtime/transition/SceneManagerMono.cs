@@ -1,4 +1,4 @@
-﻿using System;
+﻿#if UNITY_WSA
 using System.Diagnostics.CodeAnalysis;
 using UnityEditor;
 using UnityEngine;
@@ -49,3 +49,4 @@ namespace Project.Scripts.Runtime.transition
         }
     } 
 }
+#endif

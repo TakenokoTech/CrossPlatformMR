@@ -1,11 +1,8 @@
-﻿using System;
+﻿#if UNITY_WSA
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
 using Project.Scripts.Runtime.utils;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Windows.WebCam;
 
 namespace Project.Scripts.Runtime.camera
 {
@@ -69,3 +66,4 @@ namespace Project.Scripts.Runtime.camera
         }
     } 
 }
+#endif
