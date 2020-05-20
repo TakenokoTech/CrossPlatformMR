@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-7536770293170050990
+--- !u!114 &-4184312746998773855
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UsePrimaryWindowForDisplay: 1
   HolographicRemoting: 1
---- !u!114 &-626849244877676063
+--- !u!114 &-3447043170159792120
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -26,7 +26,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed912223f7b3af74d8e196b2a4e662b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DepthBufferFormat: 1
+  DepthBufferFormat: 0
   UseSharedDepthBuffer: 1
 --- !u!114 &11400000
 MonoBehaviour:
@@ -42,11 +42,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Keys: 0e00000001000000
   Values:
-  - {fileID: -626849244877676063}
-  - {fileID: 3619371237178354846}
+  - {fileID: -3447043170159792120}
+  - {fileID: 3039908526814825309}
   BuildValues:
-  - {fileID: -7536770293170050990}
---- !u!114 &3619371237178354846
+  - {fileID: -4184312746998773855}
+--- !u!114 &3039908526814825309
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

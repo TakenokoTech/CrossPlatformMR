@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_WSA
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Project.Scripts.Runtime.utils;
@@ -89,3 +90,4 @@ namespace Project.Scripts.Runtime.camera
         }
     }
 }
+#endif
