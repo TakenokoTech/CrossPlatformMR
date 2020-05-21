@@ -1,12 +1,11 @@
-﻿#if UNITY_WSA
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Project.Scripts.Runtime.transition
 {
-    public class SceneManagerMono : MonoBehaviour
+    public class SubSceneManagerMono : MonoBehaviour
     {
         private const string SceneRoot = "TranstionSampleScene";
         private const string Scene1 = "SampleScene1";
@@ -34,12 +33,12 @@ namespace Project.Scripts.Runtime.transition
     }
     
 #if UNITY_EDITOR
-    [CustomEditor(typeof(SceneManagerMono))]
+    [CustomEditor(typeof(SubSceneManagerMono))]
     [SuppressMessage("ReSharper", "Unity.NoNullPropagation")]
-    public class SceneManagerMonoEditor : Editor {
+    public class SubSceneManagerMonoEditor : Editor {
         public override void OnInspectorGUI(){
             base.OnInspectorGUI ();
-            var sceneManagerMono = target as SceneManagerMono;
+            var sceneManagerMono = target as SubSceneManagerMono;
             if (GUILayout.Button("Next"))
             {
                 sceneManagerMono?.Next();
@@ -52,4 +51,3 @@ namespace Project.Scripts.Runtime.transition
 #endif
 
 }
-#endif
