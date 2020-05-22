@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Project.Scripts.Runtime.utils;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -14,8 +15,7 @@ namespace Project.Scripts.Editor.build
         private static BuildConfigData buildConfig;
         private static List<string> sceneOrder = new List<string>();
         private static Dictionary<string, bool> allScene = new Dictionary<string, bool>();
-        
-        private ReorderableList draggableList;
+        private static ReorderableList draggableList;
 
         [MenuItem("Project/Show build window")]
         public static void ShowWindow()
@@ -27,8 +27,6 @@ namespace Project.Scripts.Editor.build
         {
             var config = LoadConfig();
             if (config != null) UpdateConfig(config);
-            
-            draggableList = new ReorderableList(sceneOrder, typeof(string), true, false, false, false);
         }
 
         public void OnGUI()
@@ -83,12 +81,20 @@ namespace Project.Scripts.Editor.build
             EditorGUILayout.BeginHorizontal ();
             if (GUILayout.Button("UWP ビルド"))
             {
+                var selectedBuildTargetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
+                var activeBuildTarget = EditorUserBuildSettings.activeBuildTarget;
+                EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WSA, BuildTarget.WSAPlayer);
                 BuildClass.Build(sceneOrder.ToArray(), "UWP", BuildTarget.WSAPlayer, "");
+                EditorUserBuildSettings.SwitchActiveBuildTarget(selectedBuildTargetGroup, activeBuildTarget);
             }
             
             if (GUILayout.Button("Android ビルド"))
             {
+                var selectedBuildTargetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
+                var activeBuildTarget = EditorUserBuildSettings.activeBuildTarget;
+                EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
                 BuildClass.Build(sceneOrder.ToArray(),"Android", BuildTarget.Android, "CrossPlatformMR.apk");
+                EditorUserBuildSettings.SwitchActiveBuildTarget(selectedBuildTargetGroup, activeBuildTarget);
             }
             EditorGUILayout.EndHorizontal ();
         }
@@ -115,7 +121,8 @@ namespace Project.Scripts.Editor.build
         private static void UpdateConfig(BuildConfigData config)
         {
             buildConfig = config;
-            sceneOrder = new List<string>(buildConfig.scene);
+            buildConfig.scene = buildConfig.scene ?? new List<string>();
+            sceneOrder = new List<string>(buildConfig.scene );
             allScene = new Dictionary<string, bool>();
                 
             foreach (var path in LoadAllScene())
@@ -123,6 +130,8 @@ namespace Project.Scripts.Editor.build
                 if (!allScene.ContainsKey(path)) allScene.Add(path, buildConfig.scene.Contains(path));
                 else allScene[path] = buildConfig.scene.Contains(path);
             }
+            
+            draggableList = new ReorderableList(sceneOrder, typeof(string), true, false, false, false);
         }
     }
 

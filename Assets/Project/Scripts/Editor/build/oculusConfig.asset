@@ -10,7 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
-  m_Name: otherSetting
+  m_Name: oculusConfig
   m_EditorClassIdentifier: Assembly-CSharp-Editor:Project.Scripts.Editor.build:BuildConfigData
-  scene: []
-  updateDate: 0
+  scene:
+  - Assets/Project/Scripts/Runtime/transition/OculusSampleScene.unity
+  - Assets/Project/Scripts/Runtime/transition/Sample/SampleScene1.unity
+  - Assets/Project/Scripts/Runtime/transition/Sample/SampleScene2.unity
+  - Assets/Project/Scripts/Runtime/transition/Sample/SampleScene3.unity
+  updateDate: 637257455771056673
