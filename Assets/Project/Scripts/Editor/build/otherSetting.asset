@@ -10,8 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
-  m_Name: project
+  m_Name: otherSetting
   m_EditorClassIdentifier: Assembly-CSharp-Editor:Project.Scripts.Editor.build:BuildConfigData
-  scene:
-  - Assets/Project/Scenes/SampleScene.unity
+  scene: []
   updateDate: 0

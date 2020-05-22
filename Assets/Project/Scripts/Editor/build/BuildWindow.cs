@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditorInternal;
@@ -9,10 +10,11 @@ namespace Project.Scripts.Editor.build
     public class BuildWindow : EditorWindow
     {
         private const string Tag = "BuildWindow";
-        
+
         private static BuildConfigData buildConfig;
         private static List<string> sceneOrder = new List<string>();
-        private static readonly Dictionary<string, bool> AllScene = new Dictionary<string, bool>();
+        private static Dictionary<string, bool> allScene = new Dictionary<string, bool>();
+        
         private ReorderableList draggableList;
 
         [MenuItem("Project/Show build window")]
@@ -23,68 +25,111 @@ namespace Project.Scripts.Editor.build
 
         private void OnEnable()
         {
-            buildConfig = LoadConfig();
-            if (buildConfig == null) return;
-            
-            sceneOrder = buildConfig.scene;
-            
-            foreach (var path in LoadALLScene())
-            {
-                if (!AllScene.ContainsKey(path))
-                    AllScene.Add(path, buildConfig.scene.Contains(path));
-                else
-                    AllScene[path] = buildConfig.scene.Contains(path);
-            }
+            var config = LoadConfig();
+            if (config != null) UpdateConfig(config);
             
             draggableList = new ReorderableList(sceneOrder, typeof(string), true, false, false, false);
         }
 
         public void OnGUI()
         {
-            GUILayout.Space(4);
+            EditorGUILayout.Separator();
             
             EditorGUILayout.LabelField("ビルド設定", EditorStyles.label);
-            foreach (var pair in new Dictionary<string, bool>(AllScene))
+            
+            EditorGUILayout.BeginHorizontal();
+            var newConfig = (BuildConfigData)EditorGUILayout.ObjectField(buildConfig, typeof(BuildConfigData), true);
+            if (newConfig != buildConfig)
             {
-                AllScene[pair.Key] = EditorGUILayout.ToggleLeft(pair.Key, pair.Value);
+                UpdateConfig(newConfig);
             }
+
+            if (GUILayout.Button("上書き", GUILayout.Width(80)))
+            {
+                buildConfig.scene = new List<string>(sceneOrder);
+                buildConfig.updateDate = DateTime.Now.Ticks;
+                Debug.Log("update done.");
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Separator();
+            EditorGUILayout.Separator();
             
-            GUILayout.Space(16);
+            EditorGUILayout.LabelField("シーン選択", EditorStyles.label);
             
+            foreach (var pair in new Dictionary<string, bool>(allScene))
+            {
+                allScene[pair.Key] = EditorGUILayout.ToggleLeft(pair.Key, pair.Value);
+            }
+
+            EditorGUILayout.Separator();
+            EditorGUILayout.Separator();
+
             EditorGUILayout.LabelField("シーン順序", EditorStyles.label);
+            foreach (var pair in allScene)
             {
-                foreach (var pair in AllScene)
-                {
-                    if(pair.Value && !sceneOrder.Contains(pair.Key)) sceneOrder.Add(pair.Key);
-                    if(!pair.Value && sceneOrder.Contains(pair.Key)) sceneOrder.Remove(pair.Key);
-                }
-                draggableList.DoLayoutList();
+                if (pair.Value && !sceneOrder.Contains(pair.Key)) sceneOrder.Add(pair.Key);
+                if (!pair.Value && sceneOrder.Contains(pair.Key)) sceneOrder.Remove(pair.Key);
+            }
+
+            draggableList.headerHeight = 0;
+            draggableList.footerHeight = 0;
+            draggableList.DoLayoutList();
+            
+            EditorGUILayout.Separator();
+            EditorGUILayout.Separator();
+            
+            EditorGUILayout.LabelField("ビルド", EditorStyles.label);
+            EditorGUILayout.BeginHorizontal ();
+            if (GUILayout.Button("UWP ビルド"))
+            {
+                BuildClass.Build(sceneOrder.ToArray(), "UWP", BuildTarget.WSAPlayer, "");
             }
             
-            if(GUILayout.Button( "設定ファイル更新" )) {
-                buildConfig.scene = sceneOrder; // (from pair in allScene where pair.Value select pair.Key).ToList();
-                Debug.Log( "更新しました。" );
+            if (GUILayout.Button("Android ビルド"))
+            {
+                BuildClass.Build(sceneOrder.ToArray(),"Android", BuildTarget.Android, "CrossPlatformMR.apk");
             }
+            EditorGUILayout.EndHorizontal ();
         }
-        
+
         private static BuildConfigData LoadConfig()
         {
-            return (BuildConfigData)AssetDatabase
+            return AssetDatabase
                 .FindAssets("t:ScriptableObject")
                 .Select(AssetDatabase.GUIDToAssetPath)
                 .Select(path => AssetDatabase.LoadAssetAtPath(path, typeof(BuildConfigData)))
+                .Select(obj => (BuildConfigData) obj)
+                .OrderByDescending(obj => obj.updateDate)
                 .FirstOrDefault(obj => obj != null);
         }
 
-        private static List<string> LoadALLScene()
+        private static IEnumerable<string> LoadAllScene()
         {
-            return AssetDatabase.FindAssets("t:Scene", new[] {"Assets/Project"}).Select(AssetDatabase.GUIDToAssetPath).ToList();
+            return AssetDatabase
+                .FindAssets("t:Scene", new[] {"Assets/Project"})
+                .Select(AssetDatabase.GUIDToAssetPath)
+                .ToList();
+        }
+        
+        private static void UpdateConfig(BuildConfigData config)
+        {
+            buildConfig = config;
+            sceneOrder = new List<string>(buildConfig.scene);
+            allScene = new Dictionary<string, bool>();
+                
+            foreach (var path in LoadAllScene())
+            {
+                if (!allScene.ContainsKey(path)) allScene.Add(path, buildConfig.scene.Contains(path));
+                else allScene[path] = buildConfig.scene.Contains(path);
+            }
         }
     }
-    
+
     [CreateAssetMenu(menuName = "Project/Create BuildConfig")]
     public class BuildConfigData : ScriptableObject
     {
         [SerializeField] public List<string> scene;
+        [SerializeField] public long updateDate;
     }
 }

@@ -26,25 +26,25 @@ namespace Project.Scripts.Editor.build
         [MenuItem("Project/Build UWP")]
         public static void Build_UWP()
         {
-            Build("UWP", BuildTarget.WSAPlayer, "");
+            Build(SceneList, "UWP", BuildTarget.WSAPlayer, "");
         }
 
         [MenuItem("Project/Build Android")]
         public static void Build_Android()
         {
-            Build("Android", BuildTarget.Android, "CrossPlatformMR.apk");
+            Build(SceneList,"Android", BuildTarget.Android, "CrossPlatformMR.apk");
         }
 
         /**
          * ビルド
          */
-        private static void Build(string outputDir, BuildTarget buildTarget, string fileName)
+        internal static void Build(string[] sceneList, string outputDir, BuildTarget buildTarget, string fileName)
         {
             var option = Options.Aggregate(BuildOptions.None, (c, o) => c | o);
             var locationPathName = Directory.GetCurrentDirectory() + $"/App/{outputDir}/{fileName}";
             
             DeleteDir(Directory.GetCurrentDirectory() + $"/App/{outputDir}");
-            var report = BuildPipeline.BuildPlayer(SceneList, locationPathName, buildTarget, option);
+            var report = BuildPipeline.BuildPlayer(sceneList, locationPathName, buildTarget, option);
 
             if (report.summary.result == BuildResult.Failed)
                 Debug.LogError("[Build] Error. " + report.summary.outputPath);
