@@ -449,8 +449,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65ca83fbfa3aab0458df6835e154355b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  thisSceneName: 
-  nextSceneName: SampleScene1
+  rootSceneName:
+    sceneName: TranstionSampleScene
+  thisSceneName:
+    sceneName: 
+  nextSceneName:
+    sceneName: SampleScene1
+  onAwake: 1
 --- !u!1 &1847757180
 GameObject:
   m_ObjectHideFlags: 0
