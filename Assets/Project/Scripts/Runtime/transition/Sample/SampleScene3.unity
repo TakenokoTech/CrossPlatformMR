@@ -150,8 +150,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65ca83fbfa3aab0458df6835e154355b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  thisSceneName: SampleScene3
-  nextSceneName: SampleScene1
+  rootSceneName:
+    sceneName: TranstionSampleScene
+  thisSceneName:
+    sceneName: SampleScene3
+  nextSceneName:
+    sceneName: SampleScene1
+  onAwake: 0
 --- !u!4 &639199397
 Transform:
   m_ObjectHideFlags: 0

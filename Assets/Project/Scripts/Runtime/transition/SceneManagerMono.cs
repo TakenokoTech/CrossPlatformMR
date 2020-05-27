@@ -1,5 +1,5 @@
-﻿#if UNITY_WSA
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using Project.Scripts.Runtime.utils;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,13 +8,17 @@ namespace Project.Scripts.Runtime.transition
 {
     public class SceneManagerMono : MonoBehaviour
     {
-        private const string SceneRoot = "TranstionSampleScene";
-        private const string Scene1 = "SampleScene1";
-        private const string Scene2 = "SampleScene2";
-        private const string Scene3 = "SampleScene3";
-
-        [SerializeField] private string thisSceneName;
-        [SerializeField] private string nextSceneName;
+        private const string Tag = "SceneManagerMono";
+        
+        [SerializeField] private SceneObject rootSceneName;
+        [SerializeField] private SceneObject thisSceneName;
+        [SerializeField] private SceneObject nextSceneName;
+        [SerializeField] private bool onAwake;
+        
+        private void Awake()
+        {
+            if (onAwake) Next();
+        }
 
         public void Next()
         {
@@ -22,6 +26,8 @@ namespace Project.Scripts.Runtime.transition
                 var sceneName = SceneManager.GetSceneAt(i).name;
                 if (sceneName == nextSceneName) return;
             }
+            
+            SceneManager.sceneLoaded += GameSceneLoaded;
             // SceneManager.LoadScene(Scene1, LoadSceneMode.Additive);
             if(!string.IsNullOrEmpty(thisSceneName)) SceneManager.UnloadSceneAsync(thisSceneName);
             if(!string.IsNullOrEmpty(nextSceneName)) SceneManager.LoadScene(nextSceneName, LoadSceneMode.Additive);
@@ -29,7 +35,13 @@ namespace Project.Scripts.Runtime.transition
 
         public void Finish()
         {
-            SceneManager.LoadScene(SceneRoot, LoadSceneMode.Single);
+            SceneManager.LoadScene(rootSceneName, LoadSceneMode.Single);
+        }
+        
+        private static void GameSceneLoaded(Scene next, LoadSceneMode mode)
+        {
+            Log.D(Tag, $"GameSceneLoaded. {next.name}-{mode}");
+            SceneManager.sceneLoaded -= GameSceneLoaded;
         }
     }
     
@@ -52,4 +64,3 @@ namespace Project.Scripts.Runtime.transition
 #endif
 
 }
-#endif
